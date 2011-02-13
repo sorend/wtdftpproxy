@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     Apr 19, 2009 6:04:19 PM                                                        
+
+     wtdftpproxy    
+     FTP proxy
+                   
+     sorenad                                                                
+     ====================================================================== -->
+<project name="wtdftpproxy" default="jar">
+    <description>
+            FTP proxy
+    </description>
+
+    <target name="jar" depends="compile,keystore-gen" description="FTP proxy">
+    	<tstamp>
+    	   <format property="builddate" pattern="yyyyMMdd" />
+    	</tstamp>
+        <jar destfile="wtdftpproxy-${builddate}.jar">
+        	<fileset dir="bin">
+        		<include name="**/*"/>
+        	</fileset>
+        	<manifest>
+        		<attribute name="Main-Class" value="net.tanesha.wtdftpproxy.Main" />
+        	</manifest>
+        </jar>
+    </target>
+
+	<target name="keystore-gen" depends="compile">
+		<delete file="bin/wtdftp.keystore" failonerror="false"/>
+		<exec command="keytool">
+			<arg line="-genkey -dname 'CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown' -alias wtdftp -keypass wtdftp -keystore bin/wtdftp.keystore -storepass wtdftp -keyalg RSA -keysize 2048"/>
+		</exec>
+	</target>
+	
+    <target name="compile">
+    	<mkdir dir="bin" />
+    	<javac srcdir="src" destdir="bin" />
+    </target>
+
+</project>
