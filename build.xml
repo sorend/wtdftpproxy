@@ -28,9 +28,21 @@
 
 	<target name="keystore-gen" depends="compile">
 		<delete file="bin/wtdftp.keystore" failonerror="false"/>
+		<genkey alias="wtdftp" keypass="wtdftp" keystore="bin/wtdftp.keystore" storepass="wtdftp">
+			<dname>
+				<param name="CN" value="Unknown"/>
+				<param name="OU" value="Unknown"/>
+				<param name="O" value="Unknown"/>
+				<param name="L" value="Unknown"/>
+				<param name="ST" value="Unknown"/>
+				<param name="C" value="Unknown"/>
+			</dname>
+		</genkey>
+<!--
 		<exec command="keytool">
 			<arg line="-genkey -dname 'CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown' -alias wtdftp -keypass wtdftp -keystore bin/wtdftp.keystore -storepass wtdftp -keyalg RSA -keysize 2048"/>
 		</exec>
+-->
 	</target>
 	
     <target name="compile">
