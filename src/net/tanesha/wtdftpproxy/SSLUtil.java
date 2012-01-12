@@ -1,6 +1,5 @@
 package net.tanesha.wtdftpproxy;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
@@ -11,7 +10,7 @@ import java.security.cert.X509Certificate;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLServerSocketFactory;
+// import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
@@ -35,7 +34,7 @@ public class SSLUtil {
 	}
 
 	private SSLSocketFactory sslClientF;
-	private SSLServerSocketFactory sslServerF;
+	// private SSLServerSocketFactory sslServerF;
 
 	public void configure() {
 		try {
@@ -67,7 +66,7 @@ public class SSLUtil {
 			} };
 			
 			ctx.init(kmf.getKeyManagers(), tm, new SecureRandom());
-			sslServerF = ctx.getServerSocketFactory();
+			// sslServerF = ctx.getServerSocketFactory();
 			sslClientF = ctx.getSocketFactory();
 			file.close();
 		} catch (Exception e) {

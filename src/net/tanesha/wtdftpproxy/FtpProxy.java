@@ -3,10 +3,12 @@ package net.tanesha.wtdftpproxy;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,20 +29,22 @@ public class FtpProxy implements Runnable {
 
 	private Logger LOG = Logger.getLogger("proxy");
 	
+	private InetAddress bindAddr;
 	private Socket serverSock;
 	private String secret;
 	
 	private FtpServer server = null;
 	private FtpClient client = null;
 
-	private boolean running = true;
+	// private boolean running = true;
 	
 	private Thread CtoS;
 	private Thread StoC;
 	
 	private Map<String, String> params = new HashMap<String, String>();
 	
-	public FtpProxy(Socket serverSock, String secret) {
+	public FtpProxy(InetAddress bindAddr, Socket serverSock, String secret) {
+		this.bindAddr = bindAddr;
 		this.serverSock = serverSock;
 		this.secret = secret;
 	}
@@ -96,7 +100,7 @@ public class FtpProxy implements Runnable {
 				String host = m.group(2);
 				int port = Integer.parseInt(m.group(3));
 
-				client = new FtpClient(this.serverSock.getInetAddress(), host, port, username, params);
+				client = new FtpClient(this.bindAddr, host, port, username, params);
 
 				try {
 					reply = client.connect();
@@ -105,7 +109,7 @@ public class FtpProxy implements Runnable {
 				}
 				catch (Exception e) {
 					client.close();
-					LOG.info("Login failed " + host + ":" + port + " (" + e.getMessage() + ")");
+					LOG.log(Level.INFO, "Login failed " + host + ":" + port + " (" + e.getMessage() + ")", e);
 					// do nothing, we try the next
 				}
 			}
@@ -156,7 +160,7 @@ public class FtpProxy implements Runnable {
 	
 	private void shutdown(boolean isServer) {
 		// LOG.warning("Shutdown proxy .. " + (isServer ? "from server" : "from client"));
-		running = false;
+		// running = false;
 		client.close();
 		server.close();
 	}
@@ -180,7 +184,7 @@ public class FtpProxy implements Runnable {
 				}
 			}
 			catch (IOException e) {
-				LOG.warning("Error on connection: " + e.getMessage());
+				LOG.log(Level.WARNING, "Error on connection: " + e.getMessage(), e);
 			}
 
 			shutdown(isServer);

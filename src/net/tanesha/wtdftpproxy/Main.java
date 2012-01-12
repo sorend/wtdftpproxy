@@ -1,6 +1,7 @@
 package net.tanesha.wtdftpproxy;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -14,11 +15,13 @@ import java.util.logging.Logger;
 public class Main implements Runnable {
 
 	private Logger LOG = Logger.getLogger("main");
-	
+
+    private InetAddress bindAddr;
 	private ServerSocket socket;
 	private String secret;
 	
-	private Main(ServerSocket socket, String secret) {
+	private Main(InetAddress bindAddr, ServerSocket socket, String secret) {
+		this.bindAddr = bindAddr;
 		this.socket = socket;
 		this.secret = secret;
 	}
@@ -34,7 +37,7 @@ public class Main implements Runnable {
 				// accept new connections
 				Socket sock = socket.accept();
 				// for a proxy thread for each connection received.
-				new Thread(new FtpProxy(sock, secret)).start();
+				new Thread(new FtpProxy(bindAddr, sock, secret)).start();
 			}
 		}
 		catch (IOException e) {
@@ -62,7 +65,7 @@ public class Main implements Runnable {
 		ss.bind(addr);
 		
 		// create proxy
-		Main proxy = new Main(ss, args[1]);
+		Main proxy = new Main(addr.getAddress(), ss, args[1]);
 		// run main loop
 		proxy.run();
 	}
