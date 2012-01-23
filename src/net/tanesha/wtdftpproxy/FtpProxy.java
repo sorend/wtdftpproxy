@@ -80,7 +80,7 @@ public class FtpProxy implements Runnable {
 				user = user.substring(0, pidx);
 			}
 
-			String[] logins = user.split(",");
+			String[] logins = user.split("\"");
 
 			if (!secret.equals(logins[0])) {
 				return;
